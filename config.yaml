@@ -1,6 +1,6 @@
 
 # ---- OPENAI CONFIG -----
-OPENAI_API_KEY: "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"   #注意在非私人环境部署的时候，这里不能明文写在配置上
+OPENAI_API_KEY: "my-openai-key"   #注意在非私人环境部署的时候，这里不能明文写在配置上
 EMBEDDINGS_MODEL: "text-embedding-ada-002"
 GENERATIVE_MODEL: "gpt-4" # use gpt-4 for better results
 EMBEDDING_DIMENSIONS: 1536
