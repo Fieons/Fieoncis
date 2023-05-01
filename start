@@ -1,0 +1,16 @@
+#!/bin/bash
+# 在terminal 输入：bash start "<your OPENAI_API_KEY>
+
+et -e
+
+echo "Starting JEN..."
+
+# 激活虚拟环境
+python -m virtualenv venv
+source venv/bin/activate
+
+# 打开docker containers ，需先打开docker desktop
+docker-compose up -d
+
+#打开app
+OPENAI_API_KEY=$1 python app.py

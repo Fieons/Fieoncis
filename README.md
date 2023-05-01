@@ -11,3 +11,6 @@
 | milvus-standalone | /tini -- milvus run standalone | Up | 0.0.0.0:19530->19530/tcp,:::19530->19530/tcp |
 - 要停止Milvus standalone, 运行: `docker-compose down`
 - 停止Milvus standalone后清除数据，运行 `rm -rf  volumes`
+  
+# 启动程序
+`bash start "<your OPENAI_API_KEY>"`
