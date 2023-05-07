@@ -4,10 +4,17 @@ import sys
 from pprint import pformat
 import yaml
 
+# public enviroment
 # Load config items from config.yaml.
 # Use Path.resolve() to get the absolute path of the parent directory
+# yaml_dir = Path(__file__).resolve().parent
+# yaml_path = yaml_dir / "config.yaml"  # Use Path / operator to join paths
+
+# private enviroment
+# Load config items from config-private.yaml
+# Use Path.resolve() to get the absolute path of the parent directory
 yaml_dir = Path(__file__).resolve().parent
-yaml_path = yaml_dir / "config.yaml"  # Use Path / operator to join paths
+yaml_path = yaml_dir / "config-private.yaml"  # Use Path / operator to join paths
 
 def load_yaml_config(path):
     """Load a yaml file and return a dictionary of its contents."""
@@ -28,8 +35,3 @@ else:
     logging.error(f"Could not load config from {yaml_path}.")
     sys.exit(1)  # Exit the program if the config is invalid
 
-# Set a default value for SERVER_PORT if not specified in the config
-SERVER_PORT = yaml_config.get("SERVER_PORT", None)
-
-# Use Path.resolve() to get the absolute path of the current directory
-SERVER_DIR = Path(__file__).resolve().parent

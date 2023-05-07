@@ -5,11 +5,22 @@ from langchain.document_loaders import UnstructuredMarkdownLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Milvus
 import os
-import getpass
 import json
-import base64
+from config import *
 
-os.environ['OPENAI_API_KEY'] = getpass.getpass('OpenAI API Key:')
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("debug.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+logging.info("embeddings have setted to OpenAIEmbeddings")
 
 # 构建Milvus数据库collection
 # 导入目标md文件
@@ -19,22 +30,32 @@ def md_to_vector_tup(mdpath:str , connectionargs:dict , embeddings):
     loader = UnstructuredMarkdownLoader(mdpath)
     raw_documents = loader.load()
 
-    # Split text and file name , file extension
+    # Split file name , file extension
     file_name_with_extension = os.path.basename(mdpath)
     file_name , file_extension = os.path.splitext(file_name_with_extension)
-    text_splitter = RecursiveCharacterTextSplitter()
+    
+    # Split text 
+    text_splitter = RecursiveCharacterTextSplitter(
+    # Set a suitable chunk size.
+    chunk_size = 100,
+    chunk_overlap  = 20,
+    length_function = len,
+    )
     docs = text_splitter.split_documents(raw_documents)
+    logging.info(docs)
     
     #collection name can only contain numbers, letters and underscores
-    #因此需要对文件名称（多数时候是包含中文的）进行base64编码，之后再解码
-    utf8_bytes = file_name.encode('utf-8') 
-    file_name_base64 = str(base64.b64encode(utf8_bytes).decode('utf-8'))
+    #因此需要对文件名称（多数时候是包含中文的）进行编码，之后再解码
+    encoded_file_name = ""
+    for char in file_name:
+        encoded_file_name += "_{:04x}".format(ord(char))
+        
     
     # Load Data to vectorstore
     VectorStore = Milvus.from_documents(
         docs,
         embeddings,
-        collection_name = 'cn_{}'.format(file_name_base64),    #the first character of a collection name must be an underscore or letter
+        collection_name = 'cn_{}'.format(encoded_file_name),    #the first character of a collection name must be an underscore or letter
         connection_args = connectionargs ,
     )
     
@@ -63,12 +84,9 @@ def serialize_vector_store(vstp:tuple):
     
 
 
-MarkDownPath = '/Users/smart_boy/Nutstore Files/何志勇的坚果云/审计/知识库/销售审计/生产制造业的销售审计方案.md'
+MarkDownPath = '/Users/smart_boy/Nutstore Files/何志勇的坚果云/审计/知识库/人事与薪酬/薪酬舞弊调查方法与防范.md'
 
 ConnectionArgs = {"host": "127.0.0.1", "port": "19530"}
-
-embeddings = OpenAIEmbeddings()
-
 
 vs_tup = md_to_vector_tup(MarkDownPath , ConnectionArgs , embeddings)
 
