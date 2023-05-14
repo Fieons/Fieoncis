@@ -8,17 +8,6 @@ import os
 import json
 from config import *
 
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("debug.log"),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 logging.info("embeddings have setted to OpenAIEmbeddings")
 
@@ -37,7 +26,7 @@ def md_to_vector_tup(mdpath:str , connectionargs:dict , embeddings):
     # Split text 
     text_splitter = RecursiveCharacterTextSplitter(
     # Set a suitable chunk size.
-    chunk_size = 100,
+    chunk_size = 400,
     chunk_overlap  = 20,
     length_function = len,
     )
@@ -89,5 +78,7 @@ MarkDownPath = '/Users/smart_boy/Nutstore Files/何志勇的坚果云/审计/知
 ConnectionArgs = {"host": "127.0.0.1", "port": "19530"}
 
 vs_tup = md_to_vector_tup(MarkDownPath , ConnectionArgs , embeddings)
+
+vs_tup[0].col.release()
 
 serialize_vector_store(vs_tup)

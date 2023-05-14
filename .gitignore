@@ -21,3 +21,6 @@ volumes/
 
 # privite config
 config-private.yaml
+
+# local storages
+md_files_pkl/
