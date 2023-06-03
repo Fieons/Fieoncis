@@ -47,10 +47,10 @@ services:
   attu:
     image: zilliz/attu:latest
     ports:
-      - "8000:3000"
+      - "8080:3000"
     environment:
-      HOST_URL: "http://192.168.0.101:8000"     # 用127.0.0.1经常不成功，要查lo0的ip才成功
-      MILVUS_URL: "192.168.0.101:19530"
+      HOST_URL: "http://192.168.0.104:8080"     # 用127.0.0.1经常不成功，要查lo0的ip才成功
+      MILVUS_URL: "192.168.0.104:19530"
 
 
 networks:
