@@ -1,25 +1,27 @@
 #from pkl to serch result
 import json
 from langchain.vectorstores import Milvus
-from langchain.embeddings import OpenAIEmbeddings
+from langchain.embeddings import HuggingFaceHubEmbeddings
 from config import *
 import os
 
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+# 这类与当初创建milvus collection时候的embbeding是否需要一致，还在尝试
+
+repo_id = "sentence-transformers/paraphrase-xlm-r-multilingual-v1"
+hg_embeddings = HuggingFaceHubEmbeddings(repo_id=repo_id, huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN)
 
 # 反序列化
-def deserialize_to_milvus_vectorstore(file_path: str) :
+def deserialize_to_milvus_vectorstore(file_path: str, milvus_host:str) :
     with open(file_path, "r") as f:
         vector_store_dict = json.load(f)
 
     # 修改Milvus类里面的_extract_filds()方法
     Milvus._extract_fields = new_extract_fields 
-    
-    # 这里之后要思考下怎样根据序列信息，引入对应的embeddings模型
-    embedding_func = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+    if milvus_host is not None:
+        vector_store_dict["connection_args"]["host"] = milvus_host
 
     vector_store = Milvus(
-        embedding_function=embedding_func,
+        embedding_function=hg_embeddings,
         collection_name=vector_store_dict["collection_name"],
         index_params=vector_store_dict["index_params"],
         search_params=vector_store_dict["search_params"],
@@ -40,12 +42,12 @@ def list_files(folder_path):
     return file_paths
 
 
-def get_out_data(folder_path, query):
+def get_out_data(folder_path, milvus_host, query):
     candidate_list = []
     pkl_file_paths = list_files(folder_path)
     
     for pkl in pkl_file_paths:
-        vectorstore = deserialize_to_milvus_vectorstore(pkl)
+        vectorstore = deserialize_to_milvus_vectorstore(pkl, milvus_host)
         out_tuple = vectorstore.similarity_search_with_score(query)[0]   #搜索结果的第一个通常是相似度最优的
         vectorstore.col.release()
 
@@ -69,6 +71,7 @@ def get_out_data(folder_path, query):
             'result_text_pk': sorted_list[0][3],
             'result_pkl': sorted_list[0][4]
             }
+
 
 def get_more_info(pkl, mid_pk):
     # 修改Milvus类里面的_extract_filds()方法

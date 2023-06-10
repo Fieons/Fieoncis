@@ -2,14 +2,14 @@
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import UnstructuredMarkdownLoader
-from langchain.embeddings import OpenAIEmbeddings
+from langchain.embeddings import HuggingFaceHubEmbeddings
 from langchain.vectorstores import Milvus
 import os
 import json
 from config import *
 
-embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-logging.info("embeddings have setted to OpenAIEmbeddings")
+repo_id = "sentence-transformers/paraphrase-xlm-r-multilingual-v1"
+hg_embeddings = HuggingFaceHubEmbeddings(repo_id=repo_id, huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN)
 
 # 构建Milvus数据库collection
 # 导入目标md文件
@@ -73,11 +73,11 @@ def serialize_vector_store(vstp:tuple):
     
 
 
-MarkDownPath = '/Users/smart_boy/Nutstore Files/何志勇的坚果云/审计/知识库/人事与薪酬/薪酬舞弊调查方法与防范.md'
+MarkDownPath = 'C:/Users/Administrator/Desktop/SD笔记.md'
 
-ConnectionArgs = {"host": "127.0.0.1", "port": "19530"}
+ConnectionArgs = {"host": "192.168.0.103", "port": "19530"}
 
-vs_tup = md_to_vector_tup(MarkDownPath , ConnectionArgs , embeddings)
+vs_tup = md_to_vector_tup(MarkDownPath , ConnectionArgs , hg_embeddings)
 
 vs_tup[0].col.release()
 

@@ -1,9 +1,0 @@
-
-# ---- OPENAI CONFIG -----
-EMBEDDINGS_MODEL: "text-embedding-ada-002"
-GENERATIVE_MODEL: "gpt-4" # use gpt-4 for better results
-EMBEDDING_DIMENSIONS: 1536
-TEXT_EMBEDDING_CHUNK_SIZE: 200
-# This is the minimum cosine similarity score that a file must have with the search query to be considered relevant
-# This is an arbitrary value, and you should vary/ remove this depending on the diversity of your dataset
-

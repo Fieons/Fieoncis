@@ -7,7 +7,23 @@ echo "Starting JEN..."
 
 # 激活虚拟环境
 python -m virtualenv venv
+
+#macos激活虚拟环境的方式
 source venv/bin/activate
+
+#windows激活虚拟环境的方式
+# venv\Scripts\activate.ps1
+#注意：
+#默认情况下在计算机上启动 Windows PowerShell 时，执行策略很可能是 Restricted。
+#Restricted 执行策略不允许任何脚本运行。
+#AllSigned 和 RemoteSigned 执行策略可防止 Windows PowerShell 运行没有数字签名的脚本。
+#本主题说明如何运行所选未签名脚本（即使在执行策略为 RemoteSigned 的情况下），还说明如何对 脚本进行签名以便您自己使用。
+#有关 Windows PowerShell 执行策略的详细信息，请参阅 about_Execution_Policy。
+#想了解 计算机上的现用执行策略，打开 PowerShell 然后输入 get-executionpolicy
+#默认情况下返回的是 Restricted
+#以管理员身份打开PowerShell 输入 set-executionpolicy remotesigned
+#就可以正常在 PowerShell 中运行 ps1 文件了
+
 
 # 打开docker containers ，需先打开docker desktop
 docker-compose up -d
