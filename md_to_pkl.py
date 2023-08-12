@@ -1,6 +1,6 @@
 # 使用langchain 搜索Milvus数据import os
 
-from textsplitter import ChineseTextSplitter, combine_sentences
+from textsplitter import ChineseTextSplitter, combine_sentences, zh_title_enhance, combine_title_paragraph
 from langchain.document_loaders import UnstructuredMarkdownLoader
 from langchain.embeddings import HuggingFaceHubEmbeddings
 from langchain.vectorstores import Milvus
@@ -8,6 +8,7 @@ import os
 import json
 from config import *
 
+# embedding model
 repo_id = "sentence-transformers/paraphrase-xlm-r-multilingual-v1"
 hg_embeddings = HuggingFaceHubEmbeddings(repo_id=repo_id, huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN)
 
@@ -27,7 +28,10 @@ def md_to_vector_tup(mdpath:str , connectionargs:dict , embeddings):
     textsplitter = ChineseTextSplitter(pdf=False, sentence_size=SENTENCE_SIZE)
 
     docs_tran = loader.load_and_split(text_splitter=textsplitter)
-    docs = combine_sentences(10, docs_tran)
+    
+    zh_enhanced_docs = zh_title_enhance(docs_tran)
+    
+    docs = combine_title_paragraph(zh_enhanced_docs)
     
     #collection name can only contain numbers, letters and underscores
     #因此需要对文件名称（多数时候是包含中文的）进行编码，之后再解码
@@ -70,7 +74,7 @@ def serialize_vector_store(vstp:tuple):
 
 MarkDownPath = "/Users/smart_boy/Nutstore Files/何志勇的坚果云/审计/知识库/人事与薪酬/薪酬舞弊调查方法与防范.md"
 
-ConnectionArgs = {"host": "192.168.0.107", "port": "19530"}
+ConnectionArgs = {"host": "192.168.0.103", "port": "19530"}
 
 vs_tup = md_to_vector_tup(MarkDownPath , ConnectionArgs , hg_embeddings)
 

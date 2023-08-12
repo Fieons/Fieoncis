@@ -18,7 +18,7 @@
 
 ## 关于windows激活虚拟环境的方式
 
-`venv\Scripts\activate.ps1`1
+`venv\Scripts\activate.ps1`
 
 注意：
 
