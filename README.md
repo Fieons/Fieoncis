@@ -47,3 +47,9 @@ torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB (G
 ```
 
 显卡还是太小了啊。
+
+
+
+# 程序逻辑
+
+## 总体逻辑
