@@ -48,8 +48,37 @@ torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB (G
 
 显卡还是太小了啊。
 
-
-
 # 程序逻辑
 
 ## 总体逻辑
+
+# 显卡相关
+
+pytorch使用cuda调动显卡进行计算，因此需要注意安装好cuda的版本
+
+```python
+import torch
+print(torch.__version__)
+print(torch.version.cuda)
+print(torch.backends.cudnn.version())
+print(torch.cuda.is_available())
+print(torch.cuda.device_count())
+print(torch.cuda.get_device_name(0))
+print(torch.cuda.current_device())
+
+#torch.cuda.is_available()
+#cuda是否可用；
+
+#torch.cuda.device_count()
+#返回gpu数量；
+
+#torch.cuda.get_device_name(0)
+#返回gpu名字，设备索引默认从0开始；
+
+#torch.cuda.current_device()
+#返回当前设备索引；
+```
+
+# 关于依赖库的安装
+
+我没有在requirements里面列入torch和对应的cuda进行安装，而是根据pytorch官网的指引另外安装。

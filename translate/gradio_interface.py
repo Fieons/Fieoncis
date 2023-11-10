@@ -4,7 +4,6 @@ import gradio as gr
 from baidu_api import read_with_ernie
 from googletrans import Translator
 import pandas as pd
-import difflib
 
 # 创建原文和翻译列表，为全局变量，用于后续操作
 content_list_raw = []
@@ -12,6 +11,7 @@ content_list_translated = []
 content_list_comment = []
 
 def upload_raw_files(files):
+    #上传原文
     for file in files:
         with open(file.name, 'r') as f:
             content = f.read()
@@ -27,6 +27,7 @@ def upload_raw_files(files):
     return content_with_htmltag, len(content_list_raw)
 
 def clean_temp_file():
+    #清除原文显示
     markdown_content_output = ""
     content_list_len = 0
     global content_list_raw
@@ -34,6 +35,7 @@ def clean_temp_file():
     return markdown_content_output, content_list_len
 
 def make_trans_talbe(input_trans_table_path):
+    #制作待翻译表格
     try:
         data_dic = {
             "原文": content_list_raw, 
@@ -53,6 +55,7 @@ def import_translated_file(input_trans_table_path):
     try:
         df = pd.read_excel(input_trans_table_path)
         global content_list_translated
+        global content_list_comment
         content_list_translated = df['译文'].tolist()
         content_list_comment = df['备注'].tolist()
         import__file_msg = "译文导入成功！"
@@ -63,6 +66,7 @@ def import_translated_file(input_trans_table_path):
 
 def output_translated_file(input_trans_table_path):
     global content_list_translated
+    global content_list_comment
     try:
         df = pd.read_excel(input_trans_table_path)
         df['译文'] = content_list_translated
@@ -97,6 +101,7 @@ def pre_paragraph(cur_paragraph_index):
         cur_paragraph_index = int(cur_paragraph_index) - 1
         inp = content_list_raw[cur_paragraph_index]
         text_translated = content_list_translated[cur_paragraph_index]
+        comment = content_list_comment[cur_paragraph_index]
         pre_next_msg = "段落索引正常"
         accept_msg = ""
     except Exception as e:
@@ -105,7 +110,7 @@ def pre_paragraph(cur_paragraph_index):
         inp = ""
         text_translated = ""
         accept_msg = ""
-    return cur_paragraph_index, inp, text_translated, pre_next_msg, accept_msg
+    return cur_paragraph_index, inp, text_translated, comment, pre_next_msg, accept_msg
 
 def next_paragraph(cur_paragraph_index):
     # gr.Text()组件会把数字转为str，要进行运算需要转回int
@@ -113,6 +118,7 @@ def next_paragraph(cur_paragraph_index):
         cur_paragraph_index = int(cur_paragraph_index) + 1
         inp = content_list_raw[cur_paragraph_index]
         text_translated = content_list_translated[cur_paragraph_index]
+        comment = content_list_comment[cur_paragraph_index]
         pre_next_msg = "段落索引正常"
         accept_msg = ""
     except Exception as e:
@@ -121,7 +127,7 @@ def next_paragraph(cur_paragraph_index):
         inp = ""
         text_translated = ""
         accept_msg = ""
-    return cur_paragraph_index, inp, text_translated, pre_next_msg, accept_msg
+    return cur_paragraph_index, inp, text_translated, comment, pre_next_msg, accept_msg
 
 def translate(input_text):
     translator = Translator()
@@ -136,10 +142,10 @@ def accept(index, text_translated, comment):
     return accept_msg
 
 def co_with_ernie(question, raw_text):
-    Access_Token = "24.a4b7570eba345e10d1e52534c1a675e2.2592000.1696312073.282335-38707342"
+    Access_Token = "24.576e05f55df15a3bf40a463956ea9862.2592000.1700917912.282335-41808988"
     anser = read_with_ernie(question, raw_text, Access_Token)
     return anser
-    
+
 
 
 with gr.Blocks() as demo: 
@@ -188,8 +194,8 @@ with gr.Blocks() as demo:
                 make_trans_btn.click(fn=make_trans_talbe, inputs=input_trans_table_path, outputs=make_table_output_text)
                 import_translated_file_btn.click(fn=import_translated_file, inputs=input_trans_table_path, outputs= files_handling_msg)
                 inp.change(fn=input_change, inputs = inp, outputs=[cur_paragraph_index, msg, text_translated])
-                pre_paragraph_btn.click(fn=pre_paragraph, inputs=cur_paragraph_index, outputs=[cur_paragraph_index, inp, text_translated, pre_next_msg, accept_msg])
-                next_paragraph_btn.click(fn=next_paragraph, inputs=cur_paragraph_index, outputs=[cur_paragraph_index, inp, text_translated, pre_next_msg,accept_msg])
+                pre_paragraph_btn.click(fn=pre_paragraph, inputs=cur_paragraph_index, outputs=[cur_paragraph_index, inp, text_translated, comment, pre_next_msg, accept_msg])
+                next_paragraph_btn.click(fn=next_paragraph, inputs=cur_paragraph_index, outputs=[cur_paragraph_index, inp, text_translated, comment, pre_next_msg,accept_msg])
                 tran_btn.click(fn=translate, inputs=inp, outputs=text_translated)
                 accept_btn.click(fn=accept, inputs=[cur_paragraph_index, text_translated, comment], outputs=accept_msg)
                 output_translated_file_btn.click(fn=output_translated_file, inputs=input_trans_table_path, outputs=files_handling_msg)
@@ -198,7 +204,7 @@ with gr.Blocks() as demo:
             with gr.Column(scale=1):
                 
                 # 创建上传原文按钮
-                upload_raw_button = gr.UploadButton("上传原文", file_count ="multiple")
+                upload_raw_button = gr.UploadButton("导入原文", file_count ="multiple")
                 # 创建清除按钮
                 clean_button = gr.Button("Clean Up")
                 
@@ -211,7 +217,7 @@ with gr.Blocks() as demo:
     
     with gr.Box():
         with gr.Row():
-            gr.Markdown("于文心一言合作的区域")
+            gr.Markdown("与文心一言合作的区域")
         
         with gr.Row():
             with gr.Column(scale=1):
