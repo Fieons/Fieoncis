@@ -4,34 +4,6 @@ from config import *
 import base64
 
 
-def read_with_zhipu(question:str, text:str, background_text:str):
-    glm_apikey = ZHIPU_API
-    
-    client = ZhipuAI(api_key=glm_apikey)
-
-    response = client.chat.completions.create(
-        model="glm-4",
-        # 采样温度，控制输出的随机性，必须为正数
-        # 取值范围是：(0.0, 1.0)，不能等于 0，默认值为 0.95，值越大，会使输出更随机，更具创造性；值越小，输出会更加稳定或确定
-        # 建议您根据应用场景调整 top_p 或 temperature 参数，但不要同时调整两个参数
-        temperature=0.95,
-        #用温度取样的另一种方法，称为核取样
-        # 取值范围是：(0.0, 1.0) 开区间，不能等于 0 或 1，默认值为 0.7
-        # 模型考虑具有 top_p 概率质量 tokens 的结果
-        # 例如：0.1 意味着模型解码器只考虑从前 10% 的概率的候选集中取 tokens
-        #建议您根据应用场景调整 top_p 或 temperature 参数，但不要同时调整两个参数
-        top_p=0.7,
-        messages=[
-            {"role":"user","content":"你好"},
-            {"role":"assistant","content":"我是人工智能助手"},
-            {"role":"user","content":"我正在阅读《银河系漫游指南》英文原版第一部，当中部分段落我不懂，我希望给你提供对应段落，你结合上下文帮我解读该段落的意思。"},
-            {"role":"assistant","content":"请你将这本书的不懂的段落、上下文提供给我，我会结合你的原文和你的问题，进行回答"},
-            {"role":"user","content":f"上下文是：{background_text}。"  + f"我不懂的段落是：{text}" + f"我的问题是：{question}"},
-        ]
-    )
-
-    return response
-
 
 def base_chat_zhipu(zhipu_messages:list, tools_options:list):
     glm_apikey = ZHIPU_API
@@ -39,7 +11,7 @@ def base_chat_zhipu(zhipu_messages:list, tools_options:list):
     client = ZhipuAI(api_key=glm_apikey)
 
     response = client.chat.completions.create(
-        model="glm-4",
+        model="glm-4-airx",
         messages=zhipu_messages,
         tools=tools_options,
         temperature=0.95,
