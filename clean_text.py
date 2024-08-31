@@ -1,4 +1,5 @@
-with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_20240713_2047.txt", 'r', encoding= 'utf-8') as f:
+
+with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_chapter6_59-65.txt", 'r', encoding= 'utf-8') as f:
     contents = f.readlines()
 
 new_contents = []
@@ -29,10 +30,10 @@ while i < len(contents):
     i+=1
 contents = new_contents
 
-print(contents)
 
-with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_20240713_2047_cleaned.md", 'w', encoding= 'utf-8') as f:
+with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_chapter6_59-65_cleaned.md", 'w', encoding= 'utf-8') as f:
     f.writelines(contents)
 
+print("finish!")
 
-
+# 完成后，需要到cleaned文件中，每一段手动回车，让后续操作能识别出段落
