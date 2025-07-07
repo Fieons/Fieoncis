@@ -7,6 +7,7 @@ import json
 # vscode 需要显式地声明PYTHONPATH,不然根本找不到本项目内的模块和包的路径
 sys.path.append("D:\Fieoncis")
 from model_api.ollama_api import base_chat_ollama
+from model_api.zhipu_api import base_chat_zhipu
 from utilities.templates.format_templates import chathistory_to_messages
 from tools_utilities.FunctionsGallary import *
 from tools_utilities.preprocessor import choose_preprosessor, get_tools
@@ -107,11 +108,17 @@ def cur_paragraph_index_change(cur_paragraph_index):
 
 def translate(input_text):
     messages = [
-        {"role": "system", "content": "You are a helpful assistant. help user to translate text to chinese, response the translated text derectly do not reply redundant text that is not relevant to the original text"},
+        {"role": "system", "content": "You are a helpful assistant. help user to translate text to Chinese, response the translated text derectly do not reply redundant text that is not relevant to the original text,Geographical names and names of people do not need to be translated"},
         {"role": "user", "content": "translate this text to chinese: " + input_text}
     ]
-    response = base_chat_ollama(messages)
-    translated_text = response.json()['choices'][0]['message']['content']
+    #response = base_chat_ollama(messages)
+    #translated_text = response.json()['choices'][0]['message']['content']
+    try:
+        response = base_chat_zhipu(messages)
+        translated_text = response.choices[0].message.content
+    except Exception as e:
+        translated_text = str(e)
+    
     return translated_text
 
 def accept(index, text_translated, comment):

@@ -5,8 +5,10 @@ import os
  
 
 #这行代码我还未搞明白，之后再研究一下
-os.environ["no_proxy"]='localhost,127.0.0.1:7897'
+#os.environ["no_proxy"]='localhost,127.0.0.1:7897'
 
+# 使用代理需要进行设置。
+os.environ["https_proxy"]='http://127.0.0.1:7897'
 
 with gr.Blocks() as demo: 
     with gr.Row():
@@ -105,6 +107,6 @@ with gr.Blocks() as demo:
 
     question.submit(chat_app, inputs=[model_option, history_count, question, raw_text, chat_bot, tools_list], outputs=[question, chat_bot, tokens_usage])
     
-demo.launch(share=False, 
+demo.launch(share=True, 
             server_name="localhost", 
             allowed_paths=["./"])

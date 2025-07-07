@@ -5,13 +5,13 @@ import base64
 
 
 
-def base_chat_zhipu(zhipu_messages:list, tools_options:list):
+def base_chat_zhipu(zhipu_messages:list, tools_options:list=[]):
     glm_apikey = ZHIPU_API
     
     client = ZhipuAI(api_key=glm_apikey)
 
     response = client.chat.completions.create(
-        model="glm-4-airx",
+        model="glm-4-plus",
         messages=zhipu_messages,
         tools=tools_options,
         temperature=0.95,

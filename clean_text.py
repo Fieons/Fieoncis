@@ -1,5 +1,5 @@
 
-with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_chapter6_59-65.txt", 'r', encoding= 'utf-8') as f:
+with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_chapter11_91-100.txt", 'r', encoding= 'utf-8') as f:
     contents = f.readlines()
 
 new_contents = []
@@ -31,9 +31,9 @@ while i < len(contents):
 contents = new_contents
 
 
-with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_chapter6_59-65_cleaned.md", 'w', encoding= 'utf-8') as f:
+with open("E:\\BaiduNetdiskDownload\\[OCR]_Hitchhiker's Guide to the Galaxy_chapter11_91-100.md", 'w', encoding= 'utf-8') as f:
     f.writelines(contents)
 
 print("finish!")
 
-# 完成后，需要到cleaned文件中，每一段手动回车，让后续操作能识别出段落
+# 完成后，需要到cleaned文件中，每一段手动回车(在段尾回车，而不是段与段之间分割一行），让后续操作能识别出段落
